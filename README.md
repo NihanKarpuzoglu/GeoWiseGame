@@ -1,1 +1,1 @@
-# GeoVise
+# GeoWise
