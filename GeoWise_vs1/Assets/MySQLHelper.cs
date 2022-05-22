@@ -1,102 +1,124 @@
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement; // Sahne değiştirmek için kullandığımız kütüphane
+using UnityEngine.SceneManagement; // Sahne deÄŸiÅŸtirmek iÃ§in kullandÄ±ÄŸÄ±mÄ±z kÃ¼tÃ¼phane
+using System.Net;
+using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+
 
 public class MySQLHelper : MonoBehaviour
 {
-    [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
+    [SerializeField] // DeÄŸiÅŸkene Inspector penceresinden eriÅŸilmesini saÄŸlÄ±yoruz.
     private string hesapOlusturURL = ""; // signUp.php
 
-    [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
+    [SerializeField] // DeÄŸiÅŸkene Inspector penceresinden eriÅŸilmesini saÄŸlÄ±yoruz.
     private string girisYapURL = ""; // login.php
 
-    [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
+    [SerializeField] // DeÄŸiÅŸkene Inspector penceresinden eriÅŸilmesini saÄŸlÄ±yoruz.
     private string adminLoginURL = "";//adminLogin.Php
 
-    // Her yerden ulaşabilmek için HesapOlustur ve GirisYap adında iki adet değişken oluşturuyor ve içerisine 
-    // StartCoroutine içinde kullanacağımız asıl fonksiyonları çağırıyoruz.
+    [SerializeField] // DeÄŸiÅŸkene Inspector penceresinden eriÅŸilmesini saÄŸlÄ±yoruz.
+    private string passwordUpdateUrl = ""; // passUpdate.php
+
+    [SerializeField] // DeÄŸiÅŸkene Inspector penceresinden eriÅŸilmesini saÄŸlÄ±yoruz.
+    private string emailExistUrl = "";  //emailExistorNot.php//ÅŸifre gÃ¼ncelleme yaparken emailin sistemde kayÄ±tlÄ± olup olmadÄ±ÄŸÄ±nÄ± kontrol eder
+
+    // Her yerden ulaÅŸabilmek iÃ§in HesapOlustur ve GirisYap adÄ±nda iki adet deÄŸiÅŸken oluÅŸturuyor ve iÃ§erisine 
+    // StartCoroutine iÃ§inde kullanacaÄŸÄ±mÄ±z asÄ±l fonksiyonlarÄ± Ã§aÄŸÄ±rÄ±yoruz.
     public void CreateAccount(string _createAccountUserName, string _createAccountEmail, string _createAccountPassword, string _createAccountPasswordAgain)
     {
-        /*: İçine girilen coroutine fonksiyonu çalıştırır ve onun bitmesini bekler. 
-         Ardından mevcut kodu çalıştırmaya kaldığı yerden devam eder.*/
+        /*: Ä°Ã§ine girilen coroutine fonksiyonu Ã§alÄ±ÅŸtÄ±rÄ±r ve onun bitmesini bekler. 
+         ArdÄ±ndan mevcut kodu Ã§alÄ±ÅŸtÄ±rmaya kaldÄ±ÄŸÄ± yerden devam eder.*/
         StartCoroutine(_CreateAccount(_createAccountUserName, _createAccountEmail, _createAccountPassword, _createAccountPasswordAgain));
     }
     public void GamerLogin(string _loginEmail, string _loginPassword)
     {
         StartCoroutine(_GamerLogin(_loginEmail, _loginPassword));
     }
+    public void EmailExist(string _email)
+    {
+        StartCoroutine(_EmailExist(_email));
+    }
+
+    public void GamerUpdatePassword(string _updatePassEmail, string _newPassword)
+    {
+        StartCoroutine(_GamerUpdatePassword(_updatePassEmail, _newPassword));
+    }
     public void AdminLogin(string adminMail, string adminPassword)
     {
         StartCoroutine(_AdminLogin(adminMail, adminPassword));
     }
-    // Giriş yapıldıysa geçerli sahneyi yeniden yüklemesi için bir fonksiyon yazdım, 
-    public void NewPage(int sceneID)//Login Scene için scene id:0 - Admin scene icin sceneId:1
+    // GiriÅŸ yapÄ±ldÄ±ysa geÃ§erli sahneyi yeniden yÃ¼klemesi iÃ§in bir fonksiyon yazdÄ±m, 
+    public void NewPage(int sceneID)//Login Scene iÃ§in scene id:0 - Admin scene icin sceneId:1
     {
-        if (sceneID == 0)//login page'e dönülmüş
+        if (sceneID == 0)//login page'e dÃ¶nÃ¼lmÃ¼ÅŸ
         {
             PlayerPrefs.SetInt("adminLog", 0);
             PlayerPrefs.SetInt("userLog", 0);
 
-            SceneManager.LoadScene("Scene2"); // Sahneyi yeniden yüklüyorum
+            SceneManager.LoadScene("Scene2"); // Sahneyi yeniden yÃ¼klÃ¼yorum
         }
-        if (sceneID == 1)//admin sahnesine geçiş
+        if (sceneID == 1)//admin sahnesine geÃ§iÅŸ
         {
             PlayerPrefs.SetInt("adminLog", 1); // 
-                                               // yukarıdaki playerprefs 1 ise giriş yapılmış anlamına geliyor.
-            SceneManager.LoadScene("AdminScene"); // Sahneyi yeniden yüklüyorum
+                                               // yukarÄ±daki playerprefs 1 ise giriÅŸ yapÄ±lmÄ±ÅŸ anlamÄ±na geliyor.
+            SceneManager.LoadScene("AdminScene"); // Sahneyi yeniden yÃ¼klÃ¼yorum
         }
-        if(sceneID == 2)//dashboard sahnesi: oyuna geçiş
+        if(sceneID == 2)//dashboard sahnesi: oyuna geÃ§iÅŸ
         {
             PlayerPrefs.SetInt("userLog", 1);
-            SceneManager.LoadScene("DashboardScene"); // Sahneyi yeniden yüklüyorum
+            SceneManager.LoadScene("DashboardScene"); // Sahneyi yeniden yÃ¼klÃ¼yorum
         }
         
         
     }
     /*public void AdminNewPage(int sceneID, GameObject[] panels)
     {
-        panels[0].SetActive(false); // ana paneli açar
-        panels[1].SetActive(false); // hesap oluşturma panelini kapatır
-        panels[2].SetActive(true); // admin giriş panelini açar
+        panels[0].SetActive(false); // ana paneli aÃ§ar
+        panels[1].SetActive(false); // hesap oluÅŸturma panelini kapatÄ±r
+        panels[2].SetActive(true); // admin giriÅŸ panelini aÃ§ar
         /*PlayerPrefs.SetInt("logAdmin", 1); // 
-        // yukarıdaki playerprefs 1 ise admin giriş yapılmış anlamına geliyor.
-        SceneManager.LoadScene(sceneID, LoadSceneMode.Single); // Sahneyi yeniden yüklüyorum
+        // yukarÄ±daki playerprefs 1 ise admin giriÅŸ yapÄ±lmÄ±ÅŸ anlamÄ±na geliyor.
+        SceneManager.LoadScene(sceneID, LoadSceneMode.Single); // Sahneyi yeniden yÃ¼klÃ¼yorum
     }*/
 
     IEnumerator _CreateAccount(string _createAccountUserName, string _createAccountEmail, string _createAccountPassword, string _createAccountPasswordAgain)
     {
 
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
-        WWWForm hesapOlusturmaForm = new WWWForm(); // WWW form oluşturuyorum
+        WWWForm hesapOlusturmaForm = new WWWForm(); // WWW form oluÅŸturuyorum
 
-        hesapOlusturmaForm.AddField("username", _createAccountUserName); // Kullanıcı adı verisini forma ekliyorum
+        hesapOlusturmaForm.AddField("username", _createAccountUserName); // KullanÄ±cÄ± adÄ± verisini forma ekliyorum
         hesapOlusturmaForm.AddField("mail", _createAccountEmail); // Mail verisini forma ekliyorum
-        hesapOlusturmaForm.AddField("password", _createAccountPassword); // Şifre verisini forma ekliyorum
-        hesapOlusturmaForm.AddField("repeatpassword", _createAccountPasswordAgain); // Şifre verisini forma ekliyorum
+        hesapOlusturmaForm.AddField("password", _createAccountPassword); // Åifre verisini forma ekliyorum
+        hesapOlusturmaForm.AddField("repeatpassword", _createAccountPasswordAgain); // Åifre verisini forma ekliyorum
 
         UnityWebRequest www = UnityWebRequest.Post(hesapOlusturURL, hesapOlusturmaForm);
         yield return www.SendWebRequest();
-        //WWW veriGonder = new WWW(hesapOlusturURL, hesapOlusturmaForm); // WWW ile veri gönderilmesi için siteye bağlanıyorum
-        //yield return veriGonder; // Veriyi gönderiyorum
+        //WWW veriGonder = new WWW(hesapOlusturURL, hesapOlusturmaForm); // WWW ile veri gÃ¶nderilmesi iÃ§in siteye baÄŸlanÄ±yorum
+        //yield return veriGonder; // Veriyi gÃ¶nderiyorum
 
         string retrievingMessage = www.downloadHandler.text;
-        if (retrievingMessage == "-1")//aynı eposta ile hesap açılmış
-        { // Siteden 1 yanıtı geldiyse
-            Debug.LogWarning("Bu Epostaya ait bir hesap mevcut."); //eposta inputfieldını temizle
+        if (retrievingMessage == "-1")//aynÄ± eposta ile hesap aÃ§Ä±lmÄ±ÅŸ
+        { // Siteden 1 yanÄ±tÄ± geldiyse
+            Debug.LogWarning("Bu Epostaya ait bir hesap mevcut."); //eposta inputfieldÄ±nÄ± temizle
         }
-        else if (retrievingMessage == "-2")//kullanıcı adı daha önceden alınmış//kullanıcı adı inputfieldını temizle
+        else if (retrievingMessage == "-2")//kullanÄ±cÄ± adÄ± daha Ã¶nceden alÄ±nmÄ±ÅŸ//kullanÄ±cÄ± adÄ± inputfieldÄ±nÄ± temizle
         {
-            Debug.LogWarning("Bu kullanıcı adı daha önceden alınmış."); // Siteden 1 dışında bir yanıt gelirse sorun var yazısı yazıdırıyorum
+            Debug.LogWarning("Bu kullanÄ±cÄ± adÄ± daha Ã¶nceden alÄ±nmÄ±ÅŸ."); // Siteden 1 dÄ±ÅŸÄ±nda bir yanÄ±t gelirse sorun var yazÄ±sÄ± yazÄ±dÄ±rÄ±yorum
         }
         else if (retrievingMessage == "1")
         {
-            Debug.Log("Hesap oluşturma başarılı.");//textboxları temizle
+            Debug.Log("Hesap oluÅŸturma baÅŸarÄ±lÄ±.");//textboxlarÄ± temizle
         }
         else
         {
-            Debug.LogError("Hesap oluşturma başarısız.");//textboxları temizle
+            Debug.LogError("Hesap oluÅŸturma baÅŸarÄ±sÄ±z.");//textboxlarÄ± temizle
         }
 
 
@@ -105,29 +127,29 @@ public class MySQLHelper : MonoBehaviour
     IEnumerator _GamerLogin(string _loginEmail, string _loginPassword)
     {
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
-        WWWForm girisYapForm = new WWWForm(); // WWW Form oluşturuyorum
-        girisYapForm.AddField("Email", _loginEmail); // Kullanıcı adı bilgisini forma ekliyorum
-        girisYapForm.AddField("Password", _loginPassword); // Şifre bilgisini forma ekliyorum
+        WWWForm girisYapForm = new WWWForm(); // WWW Form oluÅŸturuyorum
+        girisYapForm.AddField("Email", _loginEmail); // KullanÄ±cÄ± adÄ± bilgisini forma ekliyorum
+        girisYapForm.AddField("Password", _loginPassword); // Åifre bilgisini forma ekliyorum
 
         UnityWebRequest www = UnityWebRequest.Post(girisYapURL, girisYapForm);
         yield return www.SendWebRequest();
 
-        /*WWW veriGonder = new WWW(girisYapURL, girisYapForm); // Forma eklediğim verileri WWW ile siteye gönderiyorum
-        yield return veriGonder; // Siteye verileri gönderdim*/
+        /*WWW veriGonder = new WWW(girisYapURL, girisYapForm); // Forma eklediÄŸim verileri WWW ile siteye gÃ¶nderiyorum
+        yield return veriGonder; // Siteye verileri gÃ¶nderdim*/
 
         string retrievingMessage = www.downloadHandler.text;
-        if (retrievingMessage == "-1")//kullanıcı aranırken hata oluştu
+        if (retrievingMessage == "-1")//kullanÄ±cÄ± aranÄ±rken hata oluÅŸtu
         {
             Debug.LogError("Hata!!"); 
         }
         else if (retrievingMessage == "-2")
         {
-            Debug.LogError("Hatalı giriş bilgileri!!"); //
+            Debug.LogError("HatalÄ± giriÅŸ bilgileri!!"); //
         }
         else if (retrievingMessage == "1")
         {
             int newScene = 2;
-            Debug.Log("Giriş başarılı"); //giriş yapılan sayfaya yönlendir//dashboarda, id'si 2;
+            Debug.Log("GiriÅŸ baÅŸarÄ±lÄ±"); //giriÅŸ yapÄ±lan sayfaya yÃ¶nlendir//dashboarda, id'si 2;
             NewPage(newScene);
         }
         else
@@ -135,31 +157,84 @@ public class MySQLHelper : MonoBehaviour
             Debug.LogError("Hata!"); //
         }
     }
+    IEnumerator _EmailExist(string _email)
+    {
+        yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
+        WWWForm emailExistForm = new WWWForm(); // WWW form oluÅŸturuyorum
+
+        emailExistForm.AddField("mail", _email); // Mail verisini forma ekliyorum
+
+        UnityWebRequest www = UnityWebRequest.Post(emailExistUrl, emailExistForm);
+        yield return www.SendWebRequest();
+        //WWW veriGonder = new WWW(hesapOlusturURL, hesapOlusturmaForm); // WWW ile veri gÃ¶nderilmesi iÃ§in siteye baÄŸlanÄ±yorum
+        //yield return veriGonder; // Veriyi gÃ¶nderiyorum
+
+        string retrievingMessage = www.downloadHandler.text;
+
+        if (retrievingMessage == "-1")
+        { // Siteden -1 yanÄ±tÄ± geldiyse
+            Debug.LogWarning("Bu email adresine kayÄ±tlÄ± kullanÄ±cÄ± bulunamadÄ±!!"); //eposta inputfieldÄ±nÄ± temizle
+        }
+        else
+        {
+            Debug.Log("Email doÄŸru");//textboxlarÄ± temizle
+            SendUpdatedPassword(_email);//mail gÃ¶nder
+        }
+
+    }
+    IEnumerator _GamerUpdatePassword(string _updatePassEmail, string _newPassword)
+    {
+
+        yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
+        WWWForm updatePassForm = new WWWForm(); // WWW form oluÅŸturuyorum
+
+        updatePassForm.AddField("mail", _updatePassEmail); // Mail verisini forma ekliyorum
+        updatePassForm.AddField("password", _newPassword); // Åifre verisini forma ekliyorum
+       
+        UnityWebRequest www = UnityWebRequest.Post(passwordUpdateUrl, updatePassForm);
+        yield return www.SendWebRequest();
+        //WWW veriGonder = new WWW(hesapOlusturURL, hesapOlusturmaForm); // WWW ile veri gÃ¶nderilmesi iÃ§in siteye baÄŸlanÄ±yorum
+        //yield return veriGonder; // Veriyi gÃ¶nderiyorum
+
+        string retrievingMessage = www.downloadHandler.text;
+        
+        if (retrievingMessage == "-1")//
+        { // Siteden 1 yanÄ±tÄ± geldiyse
+            Debug.LogWarning("Hata!!"); 
+        }
+        else
+        {
+            Debug.Log("Åifre GÃ¼ncellendi");
+
+        }
+
+    }
+    
     IEnumerator _AdminLogin(string adminMail, string adminPassword)
     {
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
-        WWWForm adminLoginForm = new WWWForm(); // WWW Form oluşturuyorum
-        adminLoginForm.AddField("Email", adminMail); // Email adı bilgisini forma ekliyorum
-        adminLoginForm.AddField("Password", adminPassword); // Şifre bilgisini forma ekliyorum
+        WWWForm adminLoginForm = new WWWForm(); // WWW Form oluÅŸturuyorum
+        adminLoginForm.AddField("Email", adminMail); // Email adÄ± bilgisini forma ekliyorum
+        adminLoginForm.AddField("Password", adminPassword); // Åifre bilgisini forma ekliyorum
 
         UnityWebRequest www = UnityWebRequest.Post(adminLoginURL, adminLoginForm);
         yield return www.SendWebRequest();
-        /*WWW veriGonder = new WWW(adminLoginURL, adminLoginForm); // Forma eklediğim verileri WWW ile siteye gönderiyorum
-        yield return veriGonder; // Siteye verileri gönderdim*/
+        /*WWW veriGonder = new WWW(adminLoginURL, adminLoginForm); // Forma eklediÄŸim verileri WWW ile siteye gÃ¶nderiyorum
+        yield return veriGonder; // Siteye verileri gÃ¶nderdim*/
 
         string retrievingMessage = www.downloadHandler.text;
-        if (retrievingMessage == "-1")//kullanıcı aranırken hata oluştu
+        if (retrievingMessage == "-1")//kullanÄ±cÄ± aranÄ±rken hata oluÅŸtu
         {
             Debug.LogError("Hata!!");
         }
         else if (retrievingMessage == "-2")
         {
-            Debug.LogError("Hatalı giriş bilgileri!!"); //
+            Debug.LogError("HatalÄ± giriÅŸ bilgileri!!"); //
         }
         else if (retrievingMessage == "1")
         {
             int newScene = 1;
-            Debug.Log("Giriş başarılı"); //admin sayfasına yönlendirme, id'si 1
+            Debug.Log("GiriÅŸ baÅŸarÄ±lÄ±"); //admin sayfasÄ±na yÃ¶nlendirme, id'si 1
             NewPage(newScene);
         }
         else
@@ -168,14 +243,49 @@ public class MySQLHelper : MonoBehaviour
         }
     }
 
-    /*void Start()
+    private void SendUpdatedPassword(string _loginEmail)
     {
-        
-    }
+        try
+        {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }*/
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+            SmtpServer.Timeout = 10000;
+            SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Port = 587;
+
+            mail.From = new MailAddress("geowiseunitygame@gmail.com");
+            mail.To.Add(new MailAddress(_loginEmail));
+
+            /*new password*/
+            /*string pattern_pass = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$";
+             * fare kÃ¼tÃ¼phanesi
+            var xeger = new Xeger(pattern_pass);
+            var generatedString = xeger.Generate();*/
+            string newPassword = "yyyy";
+
+            mail.Subject = "GeoWise New Password";
+            mail.Body = "Yeni parolanÄ±z: " + newPassword + "\nOyuna bu ÅŸifreyle giriÅŸ yapabilirsiniz";
+
+            SmtpServer.Credentials = new System.Net.NetworkCredential("geowiseunitygame@gmail.com", "geowiseunitygame22") as ICredentialsByHost; ;
+            SmtpServer.EnableSsl = true;
+            ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+            {
+                return true;
+            };
+
+            mail.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
+            SmtpServer.Send(mail);//bundan sonra bu kullanÄ±cÄ±ya ait ÅŸifre sistemden gÃ¼ncellenmeli*/
+            GamerUpdatePassword(_loginEmail, newPassword);
+
+        }
+        catch (Exception)
+        {
+            /*Error handling*/
+        }
+    }
 }
+
+
+

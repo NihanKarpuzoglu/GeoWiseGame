@@ -1,139 +1,171 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 
 
 public class UIManager : MonoBehaviour
 {
-    public GameObject[] panels; //panellerin içinde tutulduğu dizi
-    public MySQLHelper _mysqlHelper; //mysqlhelper fonksiyonlarını kullanmak için
-    
-    public InputField createAccountUserName; // Hesap oluştur paneli kullanıcı adı girdisi
-    public InputField createAccountPassword; // Hesap oluştur paneli şifre girdisi
-    public InputField createAccountPasswordAgain; // Hesap oluştur paneli tekrar şifre
-    public InputField createAccountEmail; // Hesap oluştur paneli e posta girdisi
+    public Text text_forget;
+    public GameObject toggler;//sifremi unuttum
+    //public GameObject userLogin;//kullanÄ±cÄ± giriÅŸi butonu
+    private GameObject login;
+    public GameObject[] panels; //panellerin iÃ§inde tutulduÄŸu dizi
+    public MySQLHelper _mysqlHelper; //mysqlhelper fonksiyonlarÄ±nÄ± kullanmak iÃ§in
 
-    public InputField loginEmail; // Giriş paneli kullanı adı girdisi
-    public InputField loginPassword; // Giriş paneli şifre girdisi
+    public InputField createAccountUserName; // Hesap oluÅŸtur paneli kullanÄ±cÄ± adÄ± girdisi
+    public InputField createAccountPassword; // Hesap oluÅŸtur paneli ÅŸifre girdisi
+    public InputField createAccountPasswordAgain; // Hesap oluÅŸtur paneli tekrar ÅŸifre
+    public InputField createAccountEmail; // Hesap oluÅŸtur paneli e posta girdisi
+
+    public InputField loginEmail; // GiriÅŸ paneli kullanÄ± adÄ± girdisi
+    public InputField loginPassword; // GiriÅŸ paneli ÅŸifre girdisi
+
+    
 
     //admin bilgileri
-    public InputField adminMail; 
+    public InputField adminMail;
     public InputField adminPassword;
 
-    private string _createAccountUserName; // Hesap oluştur paneli kullanıcı adı girdisi
-    private string _createAccountPassword; // Hesap oluştur paneli şifre girdisi
-    private string _createAccountPasswordAgain; // Hesap oluştur paneli şifre tekrar
-    private string _createAccountEmail; // Hesap oluştur paneli e posta girdisi
+    private string _createAccountUserName; // Hesap oluÅŸtur paneli kullanÄ±cÄ± adÄ± girdisi
+    private string _createAccountPassword; // Hesap oluÅŸtur paneli ÅŸifre girdisi
+    private string _createAccountPasswordAgain; // Hesap oluÅŸtur paneli ÅŸifre tekrar
+    private string _createAccountEmail; // Hesap oluÅŸtur paneli e posta girdisi
 
-    private string _loginEmail; // Giriş paneli kullanı adı girdisi
-    private string _loginPassword; // Giriş paneli şifre girdisi
+    private string _loginEmail; // GiriÅŸ paneli kullanÄ± adÄ± girdisi
+    private string _loginPassword; // GiriÅŸ paneli ÅŸifre girdisi
 
     private string _adminMail;
-    private string _adminPassword; 
+    private string _adminPassword;
 
 
-    // Panellerin sıralanışı
-    // 0 AnaEkran:Giriş Paneli Burda. Burdan yeni hesap oluştur butonuyla diğer panele geçiliyor
-    // 1 Hesap Oluşturma Paneli
+    // Panellerin sÄ±ralanÄ±ÅŸÄ±
+    // 0 AnaEkran:GiriÅŸ Paneli Burda. Burdan yeni hesap oluÅŸtur butonuyla diÄŸer panele geÃ§iliyor
+    // 1 Hesap OluÅŸturma Paneli
 
 
-    /*Bu fonksiyon daima Start fonksiyonundan önce çalıştırılır, ayrıca bir 
-    prefab Instantiate edildiği anda da çalıştırılır. 
-    (Eğer GameObject aktif (active) değilse bu fonksiyon 
+    /*Bu fonksiyon daima Start fonksiyonundan Ã¶nce Ã§alÄ±ÅŸtÄ±rÄ±lÄ±r, ayrÄ±ca bir 
+    prefab Instantiate edildiÄŸi anda da Ã§alÄ±ÅŸtÄ±rÄ±lÄ±r. 
+    (EÄŸer GameObject aktif (active) deÄŸilse bu fonksiyon 
     obje aktif olana kadar ya da bu objedeki bir scriptte yer alan 
-    bir fonksiyon dışarıdan çağrılana kadar çalıştırılmaz.)
-    obje pasif olsa bile çalışır. Her halükarda çalışır*/
+    bir fonksiyon dÄ±ÅŸarÄ±dan Ã§aÄŸrÄ±lana kadar Ã§alÄ±ÅŸtÄ±rÄ±lmaz.)
+    obje pasif olsa bile Ã§alÄ±ÅŸÄ±r. Her halÃ¼karda Ã§alÄ±ÅŸÄ±r*/
     void Awake()
     {
-        if (PlayerPrefs.GetInt("UserLog") == 1)//doğruysa giriş zaten yapılmış
-        { // Kullanıcı giriş yapmış mı kontrol ediyorum
-            LoginScreenClose(); // Giriş yapmışsa panelleri kapat,oyuncu panelini aç
+        if (PlayerPrefs.GetInt("UserLog") == 1)//doÄŸruysa giriÅŸ zaten yapÄ±lmÄ±ÅŸ
+        { // KullanÄ±cÄ± giriÅŸ yapmÄ±ÅŸ mÄ± kontrol ediyorum
+            LoginScreenClose(); // GiriÅŸ yapmÄ±ÅŸsa panelleri kapat,oyuncu panelini aÃ§
         }
     }
 
-    // Giriş ve hesap oluştur panelini kapatmak için
+    // GiriÅŸ ve hesap oluÅŸtur panelini kapatmak iÃ§in
     public void LoginScreenClose()
     {
-        panels[0].SetActive(false); // ana paneli kapatır
-        panels[1].SetActive(false); // hesap oluşturma panelini kapatır
-        //paneller[2].SetActive(false); // hesap oluşturma panelini kapatır
+        panels[0].SetActive(false); // ana paneli kapatÄ±r
+        panels[1].SetActive(false); // hesap oluÅŸturma panelini kapatÄ±r
+        //paneller[2].SetActive(false); // hesap oluÅŸturma panelini kapatÄ±r
 
     }
-    // Oyuncu Girişi butonuna tıklandığı zaman çalışan fonksiyon
-    public void GamerLogin()//oyuncu girişi butonuna bağlı
+    // Oyuncu GiriÅŸi butonuna tÄ±klandÄ±ÄŸÄ± zaman Ã§alÄ±ÅŸan fonksiyon
+    public void GamerLogin()//oyuncu giriÅŸi butonuna baÄŸlÄ±
     {
-        if(loginEmail.text!="" && loginPassword.text != "")
+        if (loginPassword.enabled == false)//ÅŸifre yenileme
         {
-            //??
-            _loginEmail = loginEmail.text; // Giriş paneli kullanı adı girdisi
-            _loginPassword = loginPassword.text; // Giriş paneli şifre girdisi
+            _loginEmail = loginEmail.text;
+            if (loginEmail.text != "")
+            {
+                //Ã¶nce email adresi valid mi kontrol et
+                string pattern_email = @"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$";
+                Regex regex2 = new Regex(pattern_email);
 
-            _mysqlHelper.GamerLogin(_loginEmail, _loginPassword); // MYSQLHelper scriptindeki girişyap fonksiyonunu çağırıyor ve gerekli bilgileri gönderiyor
+                if (Regex.Match(_loginEmail, pattern_email).Success)//email kontrolÃ¼
+                {//her ÅŸey doÄŸru geÃ§erli gÃ¶zÃ¼kÃ¼yor. Veri tabanÄ±nda hesabÄ± arat ve kullanÄ±cÄ±ya mail at
+                    _mysqlHelper.EmailExist(_loginEmail);
+                } 
+                else
+                {
+                    Debug.LogWarning("Uygun bir email adresi girin!!!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("TÃ¼m alanlarÄ± doldurduÄŸunuzdan emin olun!!!");
+            }
         }
-        else
+        else//oyuncu giriÅŸi
         {
-            Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+            if (loginEmail.text != "" && loginPassword.text != "")
+            {
+                //??
+                _loginEmail = loginEmail.text; // GiriÅŸ paneli kullanÄ± adÄ± girdisi
+                _loginPassword = loginPassword.text; // GiriÅŸ paneli ÅŸifre girdisi
+
+                _mysqlHelper.GamerLogin(_loginEmail, _loginPassword); // MYSQLHelper scriptindeki giriÅŸyap fonksiyonunu Ã§aÄŸÄ±rÄ±yor ve gerekli bilgileri gÃ¶nderiyor
+            }
+            else
+            {
+                Debug.LogWarning("TÃ¼m alanlarÄ± doldurduÄŸunuzdan emin olun!!!");
+            }
         }
     }
 
-    // Oyuncu Girişi butonuna tıklandığı zaman çalışan fonksiyon
-    public void AdminLogin()//yönetici girişi butonuna bağlı
+
+
+    // Oyuncu GiriÅŸi butonuna tÄ±klandÄ±ÄŸÄ± zaman Ã§alÄ±ÅŸan fonksiyon
+    public void AdminLogin()//yÃ¶netici giriÅŸi butonuna baÄŸlÄ±
     {
         if (adminMail.text != "" && adminPassword.text != "")
         {
 
-            //??Private değişkenlere atama
-            _adminMail = adminMail.text; 
+            //??Private deÄŸiÅŸkenlere atama
+            _adminMail = adminMail.text;
             _adminPassword = adminPassword.text;
 
             _mysqlHelper.AdminLogin(_adminMail, _adminPassword);
-            // MYSQLHelper scriptindeki admin girişi fonksiyonu çağırılıyor ve gerekli bilgileri gönderiliyor
+            // MYSQLHelper scriptindeki admin giriÅŸi fonksiyonu Ã§aÄŸÄ±rÄ±lÄ±yor ve gerekli bilgileri gÃ¶nderiliyor
         }
         else
         {
-            Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+            Debug.LogWarning("TÃ¼m alanlarÄ± doldurduÄŸunuzdan emin olun!!!");
         }
     }
 
-    // Hesap oluştur butonuna tıklandığı zaman çalışan fonksiyon
+    // Hesap oluÅŸtur butonuna tÄ±klandÄ±ÄŸÄ± zaman Ã§alÄ±ÅŸan fonksiyon
     public void CreateAccount()
     {
-        if(createAccountUserName.text!="" && createAccountEmail.text!="" && createAccountPassword.text!="" && createAccountPasswordAgain.text!="")
+        if (createAccountUserName.text != "" && createAccountEmail.text != "" && createAccountPassword.text != "" && createAccountPasswordAgain.text != "")
         {
-            if(createAccountPassword.text == createAccountPasswordAgain.text)//şifreler eşleşiyor mu?
+            if (createAccountPassword.text == createAccountPasswordAgain.text)//ÅŸifreler eÅŸleÅŸiyor mu?
             {
                 //??
-                _createAccountUserName = createAccountUserName.text; // Hesap oluştur paneli kullanıcı adı girdisi
-                _createAccountEmail = createAccountEmail.text; // Hesap oluştur paneli e posta girdisi
-                _createAccountPassword = createAccountPassword.text; // Hesap oluştur paneli şifre girdisi
-                _createAccountPasswordAgain = createAccountPasswordAgain.text; // Hesap oluştur paneli şifre girdisi tekrar
+                _createAccountUserName = createAccountUserName.text; // Hesap oluÅŸtur paneli kullanÄ±cÄ± adÄ± girdisi
+                _createAccountEmail = createAccountEmail.text; // Hesap oluÅŸtur paneli e posta girdisi
+                _createAccountPassword = createAccountPassword.text; // Hesap oluÅŸtur paneli ÅŸifre girdisi
+                _createAccountPasswordAgain = createAccountPasswordAgain.text; // Hesap oluÅŸtur paneli ÅŸifre girdisi tekrar
 
-                //parola regex denetleme//parola min 6 karakterden oluşmalı. İçinde en az 1 harf ve 1 sayı içermeli.
+                //parola regex denetleme//parola min 6 karakterden oluÅŸmalÄ±. Ä°Ã§inde en az 1 harf ve 1 sayÄ± iÃ§ermeli.
                 /*// Minimum eight characters, at least one letter and one number:
-                 * "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"*/
+                 * "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"*/
 
                 string pattern_pass = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$";
                 string pattern_email = @"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$";
                 Regex regex = new Regex(pattern_pass);
                 Regex regex2 = new Regex(pattern_email);
-                if (Regex.Match(_createAccountPassword, pattern_pass).Success)//true dönerse şifre kısıtlara uyuyor
+                if (Regex.Match(_createAccountPassword, pattern_pass).Success)//true dÃ¶nerse ÅŸifre kÄ±sÄ±tlara uyuyor
                 {
-                    if(Regex.Match(_createAccountEmail, pattern_email).Success)//email kontrolü
-                    {//her şey doğru geçerli gözüküyor. Veri tabanı işlemlerini başlat
+                    if (Regex.Match(_createAccountEmail, pattern_email).Success)//email kontrolÃ¼
+                    {//her ÅŸey doÄŸru geÃ§erli gÃ¶zÃ¼kÃ¼yor. Veri tabanÄ± iÅŸlemlerini baÅŸlat
                         _mysqlHelper.CreateAccount(_createAccountUserName, _createAccountEmail, _createAccountPassword, _createAccountPasswordAgain);
-                        // MySQL helper scriptinde CreateAccount oluştur fonksiyonu çağırılıyor
+                        // MySQL helper scriptinde CreateAccount oluÅŸtur fonksiyonu Ã§aÄŸÄ±rÄ±lÄ±yor
                     }
                     else
                     {
-                        Debug.LogWarning("Geçerli bir email adresi girin!");
+                        Debug.LogWarning("GeÃ§erli bir email adresi girin!");
                     }
 
                 }
                 else
                 {
-                    Debug.LogWarning("Şifre min 6 karakterden oluşmalı, en az 1 harf ve 1 sayı içermeli!");
+                    Debug.LogWarning("Åifre min 6 karakterden oluÅŸmalÄ±, en az 1 harf ve 1 sayÄ± iÃ§ermeli!");
                 }
 
 
@@ -141,27 +173,27 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Şifreler eşleşmiyor!!!");
+                Debug.LogWarning("Åifreler eÅŸleÅŸmiyor!!!");
             }
 
         }
         else
         {
-            Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+            Debug.LogWarning("TÃ¼m alanlarÄ± doldurduÄŸunuzdan emin olun!!!");
         }
-        
+
     }
 
 
-    // Giriş yap panelini açar veya kapatır
-    public void LoginPanelOpenClose()//Giriş Yap paneli
+    // GiriÅŸ yap panelini aÃ§ar veya kapatÄ±r
+    public void LoginPanelOpenClose()//GiriÅŸ Yap paneli
     {
         if (panels[0].activeSelf)
         {
             panels[0].SetActive(false);//ilk ekran
             panels[1].SetActive(true);
         }
-        else if (panels[0].activeSelf == false)//giriş yap panelini açar.
+        else if (panels[0].activeSelf == false)//giriÅŸ yap panelini aÃ§ar.
         {
             panels[0].SetActive(true);
             panels[1].SetActive(false);
@@ -170,7 +202,7 @@ public class UIManager : MonoBehaviour
     }
 
 
-    // Kayıt ol panelini açar veya kapatır
+    // KayÄ±t ol panelini aÃ§ar veya kapatÄ±r
     public void RegPanelOpenClose()
     {
         if (panels[0].activeSelf)
@@ -185,27 +217,43 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /*Start metodu, Update fonksiyonu henüz hiç çalıştırılmamışken tek seferlik gerçekleşir 
-     (eğer script enabled ise). Yani Update’ten önce çalıştırılır.*/
+    /*Start metodu, Update fonksiyonu henÃ¼z hiÃ§ Ã§alÄ±ÅŸtÄ±rÄ±lmamÄ±ÅŸken tek seferlik gerÃ§ekleÅŸir 
+     (eÄŸer script enabled ise). Yani Updateâ€™ten Ã¶nce Ã§alÄ±ÅŸtÄ±rÄ±lÄ±r.*/
 
-    //awake'in aksine bulunulan hücre pasifse çalışmaz
+    //awake'in aksine bulunulan hÃ¼cre pasifse Ã§alÄ±ÅŸmaz
     void Start()
     {
-        panels[0].SetActive(true); // ana paneli açar
-        panels[1].SetActive(false); // hesap oluşturma panelini kapatır
+        panels[0].SetActive(true); // ana paneli aÃ§ar
+        panels[1].SetActive(false); // hesap oluÅŸturma panelini kapatÄ±r
     }
-    
+
     // Update is called once per frame
-    //Update: Her frame’de tek bir kez çalıştırılır.En sık kullanılan Update çeşididir.
+    //Update: Her frameâ€™de tek bir kez Ã§alÄ±ÅŸtÄ±rÄ±lÄ±r.En sÄ±k kullanÄ±lan Update Ã§eÅŸididir.
     void Update()
     {
-        //bunu nerde yapmak mantıklı ??
-        /*_hesapOlusturKullaniciAdi = hesapOlusturKullaniciAdi.text; // Hesap oluştur paneli kullanıcı adı girdisi
-        _hesapOlusturSifre = hesapOlusturSifre.text; // Hesap oluştur paneli şifre girdisi
-        _hesapOlusturSifreAgain = hesapOlusturSifreAgain.text; // Hesap oluştur paneli e posta girdisi
-        _hesapOlusturEPosta = hesapOlusturEPosta.text; // Hesap oluştur paneli e posta girdisi
-        _girisEposta = girisEposta.text; // Giriş paneli kullanı adı girdisi
-        _girisYapSifre = girisYapSifre.text; // Giriş paneli şifre girdisi*/
+        //bunu nerde yapmak mantÄ±klÄ± ??
+        /*_hesapOlusturKullaniciAdi = hesapOlusturKullaniciAdi.text; // Hesap oluÅŸtur paneli kullanÄ±cÄ± adÄ± girdisi
+        _hesapOlusturSifre = hesapOlusturSifre.text; // Hesap oluÅŸtur paneli ÅŸifre girdisi
+        _hesapOlusturSifreAgain = hesapOlusturSifreAgain.text; // Hesap oluÅŸtur paneli e posta girdisi
+        _hesapOlusturEPosta = hesapOlusturEPosta.text; // Hesap oluÅŸtur paneli e posta girdisi
+        _girisEposta = girisEposta.text; // GiriÅŸ paneli kullanÄ± adÄ± girdisi
+        _girisYapSifre = girisYapSifre.text; // GiriÅŸ paneli ÅŸifre girdisi*/
+
+
+        if (toggler.GetComponent<Toggle>().isOn)//tÄ±klandÄ±ysa loginpassword disable olmalÄ±
+                                                //oyuncu giriÅŸi yazÄ±sÄ± ÅŸifremi unuttuma dÃ¶nmeli
+        {
+            loginPassword.enabled = false;
+            //text_forget.text = "Åifremi Unuttum";
+
+        }
+        else
+        {
+            loginPassword.enabled = true;
+            //text_forget.text = "Oyuncu GiriÅŸi";
+        }
 
     }
+
+
 }
