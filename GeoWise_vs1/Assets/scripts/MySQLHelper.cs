@@ -9,10 +9,12 @@ using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-
+using UnityEngine.UI;
 
 public class MySQLHelper : MonoBehaviour
 {
+    public NotificationHelper _notificationHelper;//notification kullanmak için
+
     [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
     private string hesapOlusturURL = ""; // signUp.php
 
@@ -107,18 +109,26 @@ public class MySQLHelper : MonoBehaviour
         if (retrievingMessage == "-1")//aynı eposta ile hesap açılmış
         { // Siteden 1 yanıtı geldiyse
             Debug.LogWarning("Bu Epostaya ait bir hesap mevcut."); //eposta inputfieldını temizle
+            string notification = "Bu Epostaya ait bir hesap mevcut!!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else if (retrievingMessage == "-2")//kullanıcı adı daha önceden alınmış//kullanıcı adı inputfieldını temizle
         {
             Debug.LogWarning("Bu kullanıcı adı daha önceden alınmış."); // Siteden 1 dışında bir yanıt gelirse sorun var yazısı yazıdırıyorum
+            string notification = "Bu kullanıcı adı daha önceden alınmış!!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else if (retrievingMessage == "1")
         {
             Debug.Log("Hesap oluşturma başarılı.");//textboxları temizle
+            string notification = "Hesap oluşturma başarılı";
+            _notificationHelper.showNotification(notification, 3);
         }
         else
         {
             Debug.LogError("Hesap oluşturma başarısız.");//textboxları temizle
+            string notification = "Hesap oluşturma başarısız!!";
+            _notificationHelper.showNotification(notification, 3);
         }
 
 
@@ -140,24 +150,32 @@ public class MySQLHelper : MonoBehaviour
         string retrievingMessage = www.downloadHandler.text;
         if (retrievingMessage == "-1")//kullanıcı aranırken hata oluştu
         {
-            Debug.LogError("Hata!!"); 
+            Debug.LogError("Hata!!");
+            string notification = "Hata!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else if (retrievingMessage == "-2")
         {
             Debug.LogError("Hatalı giriş bilgileri!!"); //
+            string notification = "Hatalı giriş bilgileri!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else if (retrievingMessage == "1")
         {
             int newScene = 2;
             Debug.Log("Giriş başarılı"); //giriş yapılan sayfaya yönlendir//dashboarda, id'si 2;
+            string notification = "Giriş başarılı";
+            _notificationHelper.showNotification(notification, 3);
             NewPage(newScene);
         }
         else
         {
             Debug.LogError("Hata!"); //
+            string notification = "Hata";
+            _notificationHelper.showNotification(notification, 3);    
         }
     }
-    IEnumerator _EmailExist(string _email)
+    IEnumerator _EmailExist(string _email)//şifre değiştirme işleminde o hesaba kayıtlı kullanıcı var mı diye bakılıyor
     {
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
         WWWForm emailExistForm = new WWWForm(); // WWW form oluşturuyorum
@@ -174,10 +192,14 @@ public class MySQLHelper : MonoBehaviour
         if (retrievingMessage == "-1")
         { // Siteden -1 yanıtı geldiyse
             Debug.LogWarning("Bu email adresine kayıtlı kullanıcı bulunamadı!!"); //eposta inputfieldını temizle
+            string notification = "Bu email adresine kayıtlı kullanıcı bulunamadı!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else
         {
-            Debug.Log("Email doğru");//textboxları temizle
+            Debug.Log("Yeni şifreniz gönderiliyor..");//textboxları temizle
+            string notification = "Yeni şifreniz gönderiliyor..";
+            _notificationHelper.showNotification(notification, 3);
             SendUpdatedPassword(_email);//mail gönder
         }
 
@@ -200,12 +222,14 @@ public class MySQLHelper : MonoBehaviour
         
         if (retrievingMessage == "-1")//
         { // Siteden 1 yanıtı geldiyse
-            Debug.LogWarning("Hata!!"); 
+            /*Debug.LogWarning("Hata!!");
+            string notification = "Hata!!";
+            _notificationHelper.showNotification(notification, 3);*/
         }
         else
         {
-            Debug.Log("Şifre Güncellendi");
-
+            string notification = "Yeni şifrenizle sisteme girişi yapabilirsiniz.";
+            _notificationHelper.showNotification(notification, 3);
         }
 
     }
@@ -225,21 +249,24 @@ public class MySQLHelper : MonoBehaviour
         string retrievingMessage = www.downloadHandler.text;
         if (retrievingMessage == "-1")//kullanıcı aranırken hata oluştu
         {
-            Debug.LogError("Hata!!");
+            //Debug.LogError("Hata!!");
+
         }
         else if (retrievingMessage == "-2")
         {
             Debug.LogError("Hatalı giriş bilgileri!!"); //
+            string notification = "Hatalı giriş bilgileri!!";
+            _notificationHelper.showNotification(notification, 3);
         }
         else if (retrievingMessage == "1")
         {
             int newScene = 1;
-            Debug.Log("Giriş başarılı"); //admin sayfasına yönlendirme, id'si 1
+            //Debug.Log("Giriş başarılı"); //admin sayfasına yönlendirme, id'si 1
             NewPage(newScene);
         }
         else
         {
-            Debug.LogError("Hata!"); //
+            //Debug.LogError("Hata!"); //
         }
     }
 
@@ -285,6 +312,7 @@ public class MySQLHelper : MonoBehaviour
             /*Error handling*/
         }
     }
+
 }
 
 

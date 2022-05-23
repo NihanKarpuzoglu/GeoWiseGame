@@ -1,24 +1,36 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
-
+using UnityEditor;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
-    public Text text_forget;
-    public GameObject toggler;//sifremi unuttum
-    //public GameObject userLogin;//kullanıcı girişi butonu
-    private GameObject login;
-    public GameObject[] panels; //panellerin içinde tutulduğu dizi
     public MySQLHelper _mysqlHelper; //mysqlhelper fonksiyonlarını kullanmak için
+    public NotificationHelper _notificationHelper;
 
-    public InputField createAccountUserName; // Hesap oluştur paneli kullanıcı adı girdisi
-    public InputField createAccountPassword; // Hesap oluştur paneli şifre girdisi
-    public InputField createAccountPasswordAgain; // Hesap oluştur paneli tekrar şifre
-    public InputField createAccountEmail; // Hesap oluştur paneli e posta girdisi
+    //Giriş ve Şifremi unuttum butonu
+    [SerializeField]
+    private Text text_forget;
+    [SerializeField]
+    private GameObject toggler;//sifremi unuttum
 
-    public InputField loginEmail; // Giriş paneli kullanı adı girdisi
-    public InputField loginPassword; // Giriş paneli şifre girdisi
+    [SerializeField]
+    private GameObject[] panels; //panellerin içinde tutulduğu dizi
+
+    [SerializeField]
+    private InputField createAccountUserName; // Hesap oluştur paneli kullanıcı adı girdisi
+    [SerializeField]
+    private InputField createAccountPassword; // Hesap oluştur paneli şifre girdisi
+    [SerializeField]
+    private InputField createAccountPasswordAgain; // Hesap oluştur paneli tekrar şifre
+    [SerializeField]
+    private InputField createAccountEmail; // Hesap oluştur paneli e posta girdisi
+
+    [SerializeField]
+    private InputField loginEmail; // Giriş paneli kullanı adı girdisi
+    [SerializeField]
+    private InputField loginPassword; // Giriş paneli şifre girdisi
 
     
 
@@ -84,26 +96,37 @@ public class UIManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("Uygun bir email adresi girin!!!");
+                    string notification = "Uygun bir email adresi girin!!!";
+                    _notificationHelper.showNotification(notification, 3);
+
                 }
             }
             else
             {
                 Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+                string notification = "Tüm alanları doldurduğunuzdan emin olun!!!";
+                _notificationHelper.showNotification(notification, 3);
             }
         }
         else//oyuncu girişi
         {
             if (loginEmail.text != "" && loginPassword.text != "")
             {
-                //??
+
                 _loginEmail = loginEmail.text; // Giriş paneli kullanı adı girdisi
                 _loginPassword = loginPassword.text; // Giriş paneli şifre girdisi
 
                 _mysqlHelper.GamerLogin(_loginEmail, _loginPassword); // MYSQLHelper scriptindeki girişyap fonksiyonunu çağırıyor ve gerekli bilgileri gönderiyor
+
+
             }
             else
             {
                 Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+                string notification = "Tüm alanları doldurduğunuzdan emin olun!!!";
+                //showNotification(notification, 3);
+                _notificationHelper.showNotification(notification, 3);
+                
             }
         }
     }
@@ -126,6 +149,8 @@ public class UIManager : MonoBehaviour
         else
         {
             Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+            string notification = "Tüm alanları doldurduğunuzdan emin olun!!!";
+            _notificationHelper.showNotification(notification, 3);
         }
     }
 
@@ -160,12 +185,16 @@ public class UIManager : MonoBehaviour
                     else
                     {
                         Debug.LogWarning("Geçerli bir email adresi girin!");
+                        string notification = "Geçerli bir email adresi girin!";
+                        _notificationHelper.showNotification(notification, 3);
                     }
 
                 }
                 else
                 {
                     Debug.LogWarning("Şifre min 6 karakterden oluşmalı, en az 1 harf ve 1 sayı içermeli!");
+                    string notification = "Şifre min 6 karakterden oluşmalı, en az 1 harf ve 1 sayı içermeli!";
+                    _notificationHelper.showNotification(notification, 3);
                 }
 
 
@@ -174,12 +203,17 @@ public class UIManager : MonoBehaviour
             else
             {
                 Debug.LogWarning("Şifreler eşleşmiyor!!!");
+                string notification = "Şifreler eşleşmiyor!!!";
+                _notificationHelper.showNotification(notification, 3);
             }
 
         }
         else
         {
             Debug.LogWarning("Tüm alanları doldurduğunuzdan emin olun!!!");
+            string notification = "Tüm alanları doldurduğunuzdan emin olun!!!";
+            _notificationHelper.showNotification(notification, 3);
+
         }
 
     }
@@ -203,6 +237,7 @@ public class UIManager : MonoBehaviour
 
 
     // Kayıt ol panelini açar veya kapatır
+  
     public void RegPanelOpenClose()
     {
         if (panels[0].activeSelf)
@@ -231,26 +266,19 @@ public class UIManager : MonoBehaviour
     //Update: Her frame’de tek bir kez çalıştırılır.En sık kullanılan Update çeşididir.
     void Update()
     {
-        //bunu nerde yapmak mantıklı ??
-        /*_hesapOlusturKullaniciAdi = hesapOlusturKullaniciAdi.text; // Hesap oluştur paneli kullanıcı adı girdisi
-        _hesapOlusturSifre = hesapOlusturSifre.text; // Hesap oluştur paneli şifre girdisi
-        _hesapOlusturSifreAgain = hesapOlusturSifreAgain.text; // Hesap oluştur paneli e posta girdisi
-        _hesapOlusturEPosta = hesapOlusturEPosta.text; // Hesap oluştur paneli e posta girdisi
-        _girisEposta = girisEposta.text; // Giriş paneli kullanı adı girdisi
-        _girisYapSifre = girisYapSifre.text; // Giriş paneli şifre girdisi*/
-
-
         if (toggler.GetComponent<Toggle>().isOn)//tıklandıysa loginpassword disable olmalı
                                                 //oyuncu girişi yazısı şifremi unuttuma dönmeli
         {
             loginPassword.enabled = false;
-            //text_forget.text = "Şifremi Unuttum";
+            loginPassword.image.color = Color.gray;
+            text_forget.text = "Şifremi Unuttum";
 
         }
         else
         {
             loginPassword.enabled = true;
-            //text_forget.text = "Oyuncu Girişi";
+            loginPassword.image.color = Color.white;
+            text_forget.text = "Oyuncu Girişi";
         }
 
     }
