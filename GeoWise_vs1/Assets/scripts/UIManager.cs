@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private InputField loginPassword; // Giriş paneli şifre girdisi
 
-    
+
 
     //admin bilgileri
     public InputField adminMail;
@@ -92,7 +92,7 @@ public class UIManager : MonoBehaviour
                 if (Regex.Match(_loginEmail, pattern_email).Success)//email kontrolü
                 {//her şey doğru geçerli gözüküyor. Veri tabanında hesabı arat ve kullanıcıya mail at
                     _mysqlHelper.EmailExist(_loginEmail);
-                } 
+                }
                 else
                 {
                     Debug.LogWarning("Uygun bir email adresi girin!!!");
@@ -126,7 +126,7 @@ public class UIManager : MonoBehaviour
                 string notification = "Tüm alanları doldurduğunuzdan emin olun!!!";
                 //showNotification(notification, 3);
                 _notificationHelper.showNotification(notification, 3);
-                
+
             }
         }
     }
@@ -180,6 +180,7 @@ public class UIManager : MonoBehaviour
                     if (Regex.Match(_createAccountEmail, pattern_email).Success)//email kontrolü
                     {//her şey doğru geçerli gözüküyor. Veri tabanı işlemlerini başlat
                         _mysqlHelper.CreateAccount(_createAccountUserName, _createAccountEmail, _createAccountPassword, _createAccountPasswordAgain);
+
                         // MySQL helper scriptinde CreateAccount oluştur fonksiyonu çağırılıyor
                     }
                     else
@@ -237,7 +238,7 @@ public class UIManager : MonoBehaviour
 
 
     // Kayıt ol panelini açar veya kapatır
-  
+
     public void RegPanelOpenClose()
     {
         if (panels[0].activeSelf)
@@ -250,6 +251,18 @@ public class UIManager : MonoBehaviour
             panels[0].SetActive(true);
             panels[1].SetActive(false);
         }
+    }
+    public void ClearCreateAccountTextbox()
+    {
+        createAccountUserName.text = "";
+        createAccountEmail.text = "";
+        createAccountPassword.text = "";
+        createAccountPasswordAgain.text = "";
+    }
+    public void ClearSendEmailTextbox()
+    {
+        loginEmail.text = "";
+
     }
 
     /*Start metodu, Update fonksiyonu henüz hiç çalıştırılmamışken tek seferlik gerçekleşir 
@@ -266,6 +279,12 @@ public class UIManager : MonoBehaviour
     //Update: Her frame’de tek bir kez çalıştırılır.En sık kullanılan Update çeşididir.
     void Update()
     {
+        if((createAccountUserName.text).Length == 20)
+        {
+            /*string notification = "Kullanıcı ismi 20 karakterden uzun olamaz";
+            _notificationHelper.showNotification(notification, 3);*/
+        
+        }
         if (toggler.GetComponent<Toggle>().isOn)//tıklandıysa loginpassword disable olmalı
                                                 //oyuncu girişi yazısı şifremi unuttuma dönmeli
         {

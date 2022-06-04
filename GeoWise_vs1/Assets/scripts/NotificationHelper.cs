@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class NotificationHelper : MonoBehaviour
 {
-    private IEnumerator notificationCoroutine;
-    private IEnumerator notificationCoroutine2;
+    private IEnumerator notificationCoroutine = null;
+    private IEnumerator notificationCoroutine2 = null;
 
     [SerializeField]
     private Image _notificationImage;
@@ -64,6 +64,7 @@ public class NotificationHelper : MonoBehaviour
     {
         _notificationText.text = text;
         _color2 = _notificationText.color;
+        _notificationText.color = Color.black;
         _color2.a = 0;
         for (float i = 0; i <= 1; i += Time.deltaTime)
         {

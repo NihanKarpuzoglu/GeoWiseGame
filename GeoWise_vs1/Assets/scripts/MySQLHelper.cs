@@ -14,6 +14,7 @@ using UnityEngine.UI;
 public class MySQLHelper : MonoBehaviour
 {
     public NotificationHelper _notificationHelper;//notification kullanmak için
+    public UIManager _uIManager;
 
     [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
     private string hesapOlusturURL = ""; // signUp.php
@@ -34,9 +35,21 @@ public class MySQLHelper : MonoBehaviour
     // StartCoroutine içinde kullanacağımız asıl fonksiyonları çağırıyoruz.
     public void CreateAccount(string _createAccountUserName, string _createAccountEmail, string _createAccountPassword, string _createAccountPasswordAgain)
     {
-        /*: İçine girilen coroutine fonksiyonu çalıştırır ve onun bitmesini bekler. 
-         Ardından mevcut kodu çalıştırmaya kaldığı yerden devam eder.*/
+        
         StartCoroutine(_CreateAccount(_createAccountUserName, _createAccountEmail, _createAccountPassword, _createAccountPasswordAgain));
+        
+        //Bu şekilde de yapılabilir
+        /*StartCoroutine(_CreateAccount(_createAccountUserName, _createAccountEmail, _createAccountPassword, _createAccountPasswordAgain, returnValue =>
+        {
+            if (returnValue != 0)
+            {
+                Debug.LogError("Error");
+                return;
+            }
+            // Place any logic you want post login
+            _uIManager.ClearCreateAccountTextbox();
+        }
+        ));*/
     }
     public void GamerLogin(string _loginEmail, string _loginPassword)
     {
@@ -91,7 +104,6 @@ public class MySQLHelper : MonoBehaviour
 
     IEnumerator _CreateAccount(string _createAccountUserName, string _createAccountEmail, string _createAccountPassword, string _createAccountPasswordAgain)
     {
-
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
         WWWForm hesapOlusturmaForm = new WWWForm(); // WWW form oluşturuyorum
 
@@ -123,6 +135,9 @@ public class MySQLHelper : MonoBehaviour
             Debug.Log("Hesap oluşturma başarılı.");//textboxları temizle
             string notification = "Hesap oluşturma başarılı";
             _notificationHelper.showNotification(notification, 3);
+            //if (callback != null) { callback.Invoke(0); }
+            _uIManager.ClearCreateAccountTextbox();
+
         }
         else
         {
@@ -201,12 +216,12 @@ public class MySQLHelper : MonoBehaviour
             string notification = "Yeni şifreniz gönderiliyor..";
             _notificationHelper.showNotification(notification, 3);
             SendUpdatedPassword(_email);//mail gönder
+            _uIManager.ClearSendEmailTextbox();
         }
 
     }
     IEnumerator _GamerUpdatePassword(string _updatePassEmail, string _newPassword)
     {
-
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
         WWWForm updatePassForm = new WWWForm(); // WWW form oluşturuyorum
 
@@ -274,7 +289,6 @@ public class MySQLHelper : MonoBehaviour
     {
         try
         {
-
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
             SmtpServer.Timeout = 10000;
