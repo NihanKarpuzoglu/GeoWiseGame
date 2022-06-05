@@ -2,7 +2,7 @@
 	$servername="localhost";
 	$username="root";
 	$password="";
-	$dbname="geovisedb1";
+	$dbname="geowisedb";
 	$conn=new mysqli($servername, $username, $password, $dbname);
 	
 	/*if($conn->connect_error)

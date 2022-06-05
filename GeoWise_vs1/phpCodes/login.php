@@ -40,12 +40,12 @@
                 {//içerde tekrar kontrol gerçekleştir//parola eşleşiyor mu
                     if($row['UserName'] === $email)
                     {//kullanıcı ismiyle giriş
-                        echo "1";//giriş başarılı	
+                        echo $row['ID'];//giriş başarılı	
                         exit();
                     }
                     else if($row['Email'] === $email)
                     {//mail adresiyle giriş
-                        echo "1";//giriş başarılı	
+                        echo $row['ID'];//giriş başarılı	
                         exit();
                     }
                 }
@@ -58,6 +58,7 @@
         }
             
     }
+    echo "-1";
     
 
 ?>
