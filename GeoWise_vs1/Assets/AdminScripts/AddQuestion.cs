@@ -75,7 +75,6 @@ public class AddQuestion : MonoBehaviour
     public void onButtonClicked()
     {
         StartCoroutine(addQuestionEvent());
-        
     }
 
     IEnumerator addQuestionEvent()
@@ -105,6 +104,7 @@ public class AddQuestion : MonoBehaviour
             else
             {
                 Debug.Log("Form upload complete!");
+                //
             }
         }
     }

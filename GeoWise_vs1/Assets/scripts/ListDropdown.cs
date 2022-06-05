@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ListDropdown : MonoBehaviour
@@ -45,6 +46,9 @@ public class ListDropdown : MonoBehaviour
         Dropdowns[1].options.Clear();//category
         Dropdowns[2].options.Clear();//city
 
+        /*Dropdowns[0].options.Add(new Dropdown.OptionData() { text = "1-Kolay"});
+        Dropdowns[1].options.Add(new Dropdown.OptionData() { text = "1-Araç Plakaları"});
+        Dropdowns[2].options.Add(new Dropdown.OptionData() { text = "1-Turkey"});*/
 
         CountryDropdownItemSelected(Dropdowns[0]);
         DifficultyDropdownItemSelected(Dropdowns[1]);
@@ -70,6 +74,14 @@ public class ListDropdown : MonoBehaviour
         /*country
         difficulty
         category*/
+        DrawQuestion.userID = id;
+        DrawQuestion.Difficulty = Convert.ToString(difficulty);
+        DrawQuestion.Category = Convert.ToString(category);
+
+        
+        PlayerPrefs.SetInt("userLog", 1);
+        SceneManager.LoadScene("GamePlay"); 
+
     }
     public void CountryDropdownItemSelected(Dropdown dropdown)//dropdown 2
     {
@@ -138,6 +150,7 @@ public class ListDropdown : MonoBehaviour
                 {
                     string[] continfo = countries[i].Split(',');
                     Dropdowns[0].options.Add(new Dropdown.OptionData() { text = continfo[0] + "-" + continfo[1] });
+                    
                 }
 
             }
