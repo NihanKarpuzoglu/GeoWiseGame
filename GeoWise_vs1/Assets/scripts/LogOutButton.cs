@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,12 +9,12 @@ public class LogOutButton : MonoBehaviour
     public void LogOut()
     {
         /*int SceneId = 0;
-        mySQLHelper.NewPage(SceneId);//giriþ sayfasýna dönüþ için sahne id:0*/
+        mySQLHelper.NewPage(SceneId);//giriÅŸ sayfasÄ±na dÃ¶nÃ¼ÅŸ iÃ§in sahne id:0*/
 
         PlayerPrefs.SetInt("adminLog", 0);
         PlayerPrefs.SetInt("userLog", 0);
 
-        SceneManager.LoadScene("Scene2"); // Sahneyi yeniden yüklüyorum
+        SceneManager.LoadScene("Scene2"); // Sahneyi yeniden yÃ¼klÃ¼yorum
     }
     // Start is called before the first frame update
     void Start()

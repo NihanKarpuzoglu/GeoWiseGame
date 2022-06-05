@@ -31,6 +31,8 @@ public class MySQLHelper : MonoBehaviour
     [SerializeField] // Değişkene Inspector penceresinden erişilmesini sağlıyoruz.
     private string emailExistUrl = "";  //emailExistorNot.php//şifre güncelleme yaparken emailin sistemde kayıtlı olup olmadığını kontrol eder
 
+    
+
     // Her yerden ulaşabilmek için HesapOlustur ve GirisYap adında iki adet değişken oluşturuyor ve içerisine 
     // StartCoroutine içinde kullanacağımız asıl fonksiyonları çağırıyoruz.
     public void CreateAccount(string _createAccountUserName, string _createAccountEmail, string _createAccountPassword, string _createAccountPasswordAgain)
@@ -149,7 +151,7 @@ public class MySQLHelper : MonoBehaviour
 
     }
 
-    IEnumerator _GamerLogin(string _loginEmail, string _loginPassword)
+    IEnumerator _GamerLogin(string _loginEmail, string _loginPassword)//dönüş değeri olarak kullanıcı id döndürmeli
     {
         yield return new WaitForEndOfFrame(); // Son karenin gelmesi bekleniyor
         WWWForm girisYapForm = new WWWForm(); // WWW Form oluşturuyorum
@@ -175,20 +177,22 @@ public class MySQLHelper : MonoBehaviour
             string notification = "Hatalı giriş bilgileri!!";
             _notificationHelper.showNotification(notification, 3);
         }
-        else if (retrievingMessage == "1")
+        else //if (retrievingMessage == "1")//kullancı id döner//bu id degerini dashboarda gönder
         {
             int newScene = 2;
             Debug.Log("Giriş başarılı"); //giriş yapılan sayfaya yönlendir//dashboarda, id'si 2;
             string notification = "Giriş başarılı";
             _notificationHelper.showNotification(notification, 3);
+            //_listDropdown.GetUserId(Convert.ToInt32(retrievingMessage));
+            ListDropdown.id = Convert.ToInt32(retrievingMessage);
             NewPage(newScene);
         }
-        else
+        /*else
         {
             Debug.LogError("Hata!"); //
             string notification = "Hata";
             _notificationHelper.showNotification(notification, 3);    
-        }
+        }*/
     }
     IEnumerator _EmailExist(string _email)//şifre değiştirme işleminde o hesaba kayıtlı kullanıcı var mı diye bakılıyor
     {

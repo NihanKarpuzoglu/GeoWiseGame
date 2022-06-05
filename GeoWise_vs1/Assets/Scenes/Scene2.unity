@@ -470,7 +470,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 5a7fe7b38ebc61d459177dd407305375, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.222
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -989,6 +989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _notificationHelper: {fileID: 1779921945}
   _uIManager: {fileID: 677834988}
+  _listDropdown: {fileID: 6358335691098045156, guid: c5f423fce93ea1a40af95be839df4937, type: 3}
   hesapOlusturURL: http://localhost/UnityGeoVise/signUp.php
   girisYapURL: http://localhost/UnityGeoVise/login.php
   adminLoginURL: http://localhost/UnityGeoVise/adminLogin.php
@@ -1496,7 +1497,7 @@ RectTransform:
   m_GameObject: {fileID: 682894046}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0023913, y: 1.0023913, z: 1.0023913}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1488772436}
   - {fileID: 535569410}
