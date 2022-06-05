@@ -989,7 +989,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _notificationHelper: {fileID: 1779921945}
   _uIManager: {fileID: 677834988}
-  _listDropdown: {fileID: 6358335691098045156, guid: c5f423fce93ea1a40af95be839df4937, type: 3}
   hesapOlusturURL: http://localhost/UnityGeoVise/signUp.php
   girisYapURL: http://localhost/UnityGeoVise/login.php
   adminLoginURL: http://localhost/UnityGeoVise/adminLogin.php

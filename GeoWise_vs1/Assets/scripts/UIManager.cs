@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
     // Panellerin sıralanışı
     // 0 AnaEkran:Giriş Paneli Burda. Burdan yeni hesap oluştur butonuyla diğer panele geçiliyor
     // 1 Hesap Oluşturma Paneli
+    //2 admin paneli
 
 
     /*Bu fonksiyon daima Start fonksiyonundan önce çalıştırılır, ayrıca bir 
