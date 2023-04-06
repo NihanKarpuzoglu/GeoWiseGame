@@ -1,2 +1,3 @@
 # GeoWise
-selam
+Unity Project - Map Game
+
